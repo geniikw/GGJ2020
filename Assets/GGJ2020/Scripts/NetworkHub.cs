@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class NetworkHub : MonoBehaviourPunCallbacks
 {
@@ -17,43 +18,44 @@ public class NetworkHub : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("PUN Basics Tutorial/Launcher: OnConnectedToMaster() was called by PUN");
-        
+
         if (isJoin)
         {
             status.text = "방으로 들어갑니다";
-        status.color = Color.white;
+            status.color = Color.white;
 
             PhotonNetwork.JoinRoom(roomNumber.text);
         }
         else
         {
             status.text = "방을 만듭니다.";
-        status.color = Color.white;
+            status.color = Color.white;
 
             PhotonNetwork.CreateRoom(Random.Range(1000, 10000).ToString(), new RoomOptions()
             {
                 MaxPlayers = 4
             });
         }
-
-
-    }
-
-    public override void OnJoinedLobby()
-    {
-        status.text = "로비에 들어왔습니다.";
-        status.color = Color.white;
-        PhotonNetwork.JoinRoom(roomNumber.text);
     }
 
     public override void OnJoinedRoom()
     {
-        status.text = PhotonNetwork.CurrentRoom.Name + "번 방으로 들어갑니다.";
+        status.text = PhotonNetwork.CurrentRoom.Name + "번 방으로 들어왔습니다.";
         status.color = Color.white;
 
         Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
         Debug.Log(PhotonNetwork.CurrentRoom.Name);
+
+        EnterScene();
     }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        status.text = "방이 없거나 찼거나 암튼 못들어감.";
+        status.color = Color.red;
+    }
+
+
 
     void Awake()
     {
@@ -72,7 +74,6 @@ public class NetworkHub : MonoBehaviourPunCallbacks
         }
         else
         {
-
             PhotonNetwork.GameVersion = gameversion;
             PhotonNetwork.ConnectUsingSettings();
         }
@@ -105,7 +106,13 @@ public class NetworkHub : MonoBehaviourPunCallbacks
 
     public void EnterScene()
     {
+        StartCoroutine(EnterRoomRoutine());
+    }
 
+    IEnumerator EnterRoomRoutine()
+    {
+        yield return Fade.Out();
+        SceneManager.LoadScene("Game");
     }
 
 }
