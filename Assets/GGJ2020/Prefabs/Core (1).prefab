@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isClonable: 0
-  itemIdx: 0
+  itemIdx: 3
   isDrag: 0
   isRotate: 0
   menu: {fileID: 6091708427580245832}
