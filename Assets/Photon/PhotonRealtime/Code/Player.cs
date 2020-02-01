@@ -37,8 +37,7 @@ namespace Photon.Realtime
     /// <remarks>
     /// Each player has a actorNumber, valid for that room. It's -1 until assigned by server (and client logic).
     /// </remarks>
-    public class Player
-    {
+    public class Player     {
         /// <summary>
         /// Used internally to identify the masterclient of a room.
         /// </summary>

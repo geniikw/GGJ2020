@@ -15,6 +15,11 @@ public class NetworkHub : MonoBehaviourPunCallbacks
 
     private bool isJoin = false;
 
+    public void SetNick(string nick)
+    {
+        PhotonNetwork.NickName = nick;
+    }
+
     public override void OnConnectedToMaster()
     {
         Debug.Log("PUN Basics Tutorial/Launcher: OnConnectedToMaster() was called by PUN");
@@ -66,7 +71,6 @@ public class NetworkHub : MonoBehaviourPunCallbacks
 
     public void MakeRoom()
     {
-        PhotonNetwork.NickName = nick.text;
         isJoin = false;
         if (PhotonNetwork.IsConnected)
         {
@@ -92,7 +96,6 @@ public class NetworkHub : MonoBehaviourPunCallbacks
         isJoin = true;
         if (PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.NickName = nick.text;
             PhotonNetwork.JoinRoom(roomNumber.text);
         }
         else
