@@ -45,6 +45,13 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
 
         if (isClonable)
         {
+            if (SetItem.i._gold == 0)
+            {
+                isDrag = false;
+                return;
+            }
+
+            SetItem.i.SetGold(SetItem.i._gold - 1);
             var clone = Instantiate(gameObject);
             clone.transform.SetParent(transform.parent);
             clone.transform.position = transform.position;
@@ -56,6 +63,9 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
     public void OnPointerUp(PointerEventData eventData)
     {
         if (isRotate)
+            return;
+
+        if (!isDrag)
             return;
 
         isDrag = false;
@@ -107,6 +117,7 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
             }
             else
             {
+                SetItem.i.SetGold(SetItem.i._gold + 1);
                 var slot = FindObjectsOfType<Slot>().FirstOrDefault(s => s.item == this);
                 if (slot != null)
                     slot.item = null;

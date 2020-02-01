@@ -24,7 +24,7 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
         transform.parent.SetAsLastSibling();
     }
 
-    public void OnDestroy()
+    public void OnDestroyClick()
     {
         enabled = false;
         var go = Instantiate(explosionPrefab);

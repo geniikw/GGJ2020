@@ -25,13 +25,32 @@ public class SetItem : MonoBehaviour
     public static List<ItemObject> tempList;
     public static List<ItemObject> shopList;
 
+    public Text goldText;
+
+    public int _gold;
+
     private void Awake()
     {
         i = this;
+
+    }
+
+    public void SetGold(int gold)
+    {
+        _gold = gold;
+        goldText.text = _gold.ToString();
+    }
+
+    private void Start()
+    {
+        SetGold(DB.i.initGold);
     }
 
     public void Initalize()
     {
+        SetGold(DB.i.initGold);
+        goldText.gameObject.SetActive(true);
+
         tempList = FindObjectsOfType<ItemObject>().Where(i => !i.isClonable).ToList();
         foreach (var item in FindObjectsOfType<ItemObject>())
         {
@@ -44,20 +63,17 @@ public class SetItem : MonoBehaviour
         foreach (var s in shopList)
             s.gameObject.SetActive(true);
 
-
-
-
-
         var go = Instantiate(corePrefab);
         go.transform.SetParent(coreSlot.transform.parent);
         go.transform.position = coreSlot.transform.position;
         go.transform.localScale = Vector3.one;
         coreSlot.item = go.GetComponent<ItemObject>();
-
     }
 
     public void OnComplete()
     {
+        goldText.gameObject.SetActive(false);
+
         foreach (var s in FindObjectsOfType<Slot>())
         {
             if (s.item != null)
@@ -79,11 +95,9 @@ public class SetItem : MonoBehaviour
 
         guide.SetActive(true);
 
+        inven.GetComponent<Graphic>().MoveUI(Vector2.zero, 0.2f, AnimationCurve.EaseInOut(0, 0, 1, 1));
 
-
-        inven.GetComponent<Graphic>().MoveUI(Vector2.zero, 0.2f, AnimationCurve.EaseInOut(0,0,1,1));
-
-        this.Scale(Vector3.one * 1.4f, 0.2f, AnimationCurve.EaseInOut(0,0,1,1));
+        this.Scale(Vector3.one * 1.4f, 0.2f, AnimationCurve.EaseInOut(0, 0, 1, 1));
 
         complete.gameObject.SetActive(false);
     }
