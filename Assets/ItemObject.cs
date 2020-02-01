@@ -48,6 +48,7 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
             var clone = Instantiate(gameObject);
             clone.transform.SetParent(transform.parent);
             clone.transform.position = transform.position;
+            clone.transform.localScale = Vector3.one;
             isClonable = false;
         }
     }

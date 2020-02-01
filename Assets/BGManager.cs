@@ -15,6 +15,7 @@ public class BGManager : MonoBehaviour
     private void Awake()
     {
         i = this;
+        Application.targetFrameRate = 30;
     }
 
     public void FireScore()
@@ -23,15 +24,17 @@ public class BGManager : MonoBehaviour
         scoreText.NumberTween(_score, 0.2f);
     }
 
-    public void GameEnd(){
+    public void GameEnd()
+    {
         _score += DB.i.destroyCoreScore;
         gameOver.gameObject.SetActive(true);
-        gameOver.score.NumberTween(_score,1f);
+        gameOver.score.NumberTween(_score, 1f);
         score.SetActive(false);
-        
+
     }
 
-    public void ScoreReset(){
+    public void ScoreReset()
+    {
         _score = 0;
         scoreText.text = "0";
     }

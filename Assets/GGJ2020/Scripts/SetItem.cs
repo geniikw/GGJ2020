@@ -41,6 +41,7 @@ public class SetItem : MonoBehaviour
         var go = Instantiate(corePrefab);
         go.transform.SetParent(coreSlot.transform.parent);
         go.transform.position= coreSlot.transform.position;
+        go.transform.localScale = Vector3.one;
         coreSlot.item = go.GetComponent<ItemObject>();
     }
 
