@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,24 +8,21 @@ using UnityEngine.UI;
 public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
     public bool isClonable = true;
-    //참이면 복사해서 원래 자리에 놓는다.
-    //참이면 코스트가 부족할시 드래그를 하지 않는다.
-
     public int itemIdx;
-    public int cost = 100;
-
-    public Sprite wallSprite;
-    public Sprite repairSprite;
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(isDrag)
+        if (isDrag)
             transform.position = eventData.position;
     }
     public bool isDrag = false;
+    public bool isRotate = false;
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (isRotate)
+            return;
+
         var rc = FindObjectOfType<GraphicRaycaster>();
 
         var result = new List<RaycastResult>();
@@ -41,25 +39,18 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
 
         if (isClonable)
         {
-            if (SetItem.i._cost > cost)
-            {
-                isDrag= true;
-                var clone = Instantiate(gameObject);
-                clone.transform.SetParent(transform.parent);
-                clone.transform.position = transform.position;
-                isClonable = false;
-                SetItem.i._cost -= cost;
-                SetItem.i.UpdateCostLabel();
-                if (fslot != null)
-                    fslot.item = null;
-            }
-            else
-                isDrag = false;
+            var clone = Instantiate(gameObject);
+            clone.transform.SetParent(transform.parent);
+            clone.transform.position = transform.position;
+            isClonable = false;
         }
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (isRotate)
+            return;
+
         isDrag = false;
         var rc = FindObjectOfType<GraphicRaycaster>();
 
@@ -74,21 +65,47 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
                 break;
         }
 
-        if (fslot != null && fslot.item == null)
-        {//슬롯위에서 높음
-            fslot.item = this;
-            SetItem.i._itemList[fslot.slotIdx] = itemIdx;
+        if (fslot != null && fslot.item == this)
+        {
+            Debug.Log("r");
             transform.position = fslot.transform.position;
+            if (itemIdx == 2)
+            {
+                var euler = transform.eulerAngles;
+                euler.z += 90f;
+                isRotate = true;
+                this.Rotation(euler, 0.2f);
+                this.StartChain().Wait(0.5f).Call(() => isRotate = false);
+
+            }
+            return;
+        }
+
+        if (fslot != null && fslot.item == null)
+        {
+            var slot = FindObjectsOfType<Slot>().FirstOrDefault(s => s.item == this);
+            if (slot != null)
+                slot.item = null;
+
+            fslot.item = this;
+            transform.position = fslot.transform.position;
+
         }
         else
         {
-
-            Destroy(gameObject);
-            SetItem.i._cost += cost;
-            SetItem.i.UpdateCostLabel();
+            if (itemIdx == 3)
+            {
+                var slot = FindObjectsOfType<Slot>().First(s => s.item == this);
+                transform.position = slot.transform.position;
+            }
+            else
+            {
+                var slot = FindObjectsOfType<Slot>().FirstOrDefault(s => s.item == this);
+                if (slot != null)
+                    slot.item = null;
+                Destroy(gameObject);
+            }
         }
-
-        //슬롯위에 놔두면 들어감
-        //슬롯위에 놔두지 않으면 바로 아이템을 버리고 코스트를 환불
+        SetItem.i.ValidateButton();
     }
 }

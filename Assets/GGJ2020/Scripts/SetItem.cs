@@ -8,55 +8,71 @@ public class SetItem : MonoBehaviour
 {
     public static SetItem i;
 
+    public GameObject guide;
+
     public Transform inven;
+    public Transform setupPosition;
 
-
-    public GameObject slotPrefab;
     public GameObject itemPrefab;
 
     public List<int> _itemList;
-    public int _cost;
 
-    public Text costText;
+    public Button complete;
+
+    public static List<ItemObject> tempList;
 
     private void Awake()
     {
         i = this;
     }
 
-    public void Initialize(List<int> itemIdx, int cost)
+    public void Initalize()
     {
-        _itemList = itemIdx;
-        _cost = cost;
-        costText.text = _cost.ToString("N0");
-        for (int i = 0; i < 15; i++)
-        {
-            var go = Instantiate(slotPrefab);
-            go.transform.SetParent(inven);
-            go.GetComponent<Slot>().slotIdx = i;
-        }
-    }
-
-    public void UpdateCostLabel()
-    {
-        costText.text = _cost.ToString("N0");
-    }
-
-    [TestMethod]
-    public void TestINit()
-    {
-        var testInven = Enumerable.Repeat(0, 15);
-        Initialize(testInven.ToList(), 10000);
-    }
-
-    private void OnEnable()
-    {
-        Initialize(GameManager.i.GetInven(), GameManager.i.GetMyCost());
+        complete.gameObject.SetActive(true);
+        inven.position = setupPosition.position;
     }
 
     public void OnComplete()
     {
-        GameManager.SendEvent(PK.CompleteItem, new object[] { MonoPlayer.i._myIdx, _itemList.ToList() });
-        gameObject.SetActive(false);
+        foreach (var s in FindObjectsOfType<Slot>())
+        {
+            if(s.item != null)
+                s.item.transform.SetParent(s.transform);
+        }
+
+        foreach(var item in FindObjectsOfType<ItemObject>().Where(i=>i.isClonable))
+            Destroy(item.gameObject);
+
+        tempList =  FindObjectsOfType<ItemObject>().Where(i=>!i.isClonable).ToList();
+        foreach(var item in FindObjectsOfType<ItemObject>()){
+            item.gameObject.SetActive(false);
+            item.enabled = false;
+        }
+
+        guide.SetActive(true);
+
+
+        
+        inven.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+
+        this.Scale(Vector3.one * 1.4f, 0.2f);
+
+        complete.gameObject.SetActive(false);
     }
+
+    public void ValidateButton()
+    {
+        var isView = true;
+        // foreach (var s in FindObjectsOfType<Slot>())
+        // {
+        //     if (s.item == null)
+        //     {
+        //         isView = false;
+        //         break;
+        //     }
+        // }
+        complete.interactable = isView;
+    }
+
+
 }
