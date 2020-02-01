@@ -51,13 +51,17 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
         Destroy(gameObject); //파괴 이팩트?
     }
 
-
+    bool isRotate = false;
     public void OnRotate()
     {
+        if(isRotate)
+            return;
         var euler = transform.eulerAngles;
         euler.z += 90f;
+        isRotate = true;
+        
         this.Rotation(euler, 0.2f);
-        menuSet.SetActive(false);
+        this.StartChain().Wait(0.2f).Call(()=>isRotate = false);
 
     }
 

@@ -24,8 +24,8 @@ public class SetItem : MonoBehaviour
 
     public Button complete;
 
-    public static List<ItemObject> tempList;
-    public static List<ItemObject> shopList;
+    public static List<ItemObject> tempList = new List<ItemObject>();
+    public static List<ItemObject> shopList= new List<ItemObject>();
 
     public Text goldText;
 
@@ -53,6 +53,7 @@ public class SetItem : MonoBehaviour
         SetGold(DB.i.initGold);
         goldText.gameObject.SetActive(true);
 
+        tempList.Clear();
         tempList = FindObjectsOfType<ItemObject>().Where(i => !i.isClonable).ToList();
         foreach (var item in FindObjectsOfType<ItemObject>())
         {
@@ -81,13 +82,14 @@ public class SetItem : MonoBehaviour
             if (s.item != null)
                 s.item.transform.SetParent(s.transform);
         }
+
         shopList = FindObjectsOfType<ItemObject>().Where(i => i.isClonable).ToList();
         foreach (var item in shopList)
         {
             item.gameObject.SetActive(false);
         }
 
-
+        tempList.Clear();
         tempList = FindObjectsOfType<ItemObject>().Where(i => !i.isClonable).ToList();
         foreach (var item in FindObjectsOfType<ItemObject>())
         {
@@ -119,17 +121,24 @@ public class SetItem : MonoBehaviour
         score.SetActive(false);
         complete.gameObject.SetActive(true);
         goldText.gameObject.SetActive(true);
-        SetGold(_gold+DB.i.addGold);
+        SetGold(_gold + DB.i.addGold);
+        foreach(var i in  FindObjectsOfType<ButtonAnimation>()){
+            i.gameObject.SetActive(false);
+        }
 
         foreach (var s in shopList)
             s.gameObject.SetActive(true);
-
+        tempList = FindObjectsOfType<ItemObject>().Where(i => !i.isClonable).ToList();
         foreach (var i in tempList)
         {
+            i.menu.enabled = false;
+            i.enabled = true;
+            this.StartChain().Wait(0.21f).Call(() =>
             {
-                i.menu.enabled = false;
-                i.enabled = true;
-            }
+                i.transform.SetParent(transform);
+                i.transform.SetAsLastSibling();
+            });
+
         }
 
     }
