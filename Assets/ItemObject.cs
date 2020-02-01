@@ -82,7 +82,7 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
                 euler.z += 90f;
                 isRotate = true;
                 this.Rotation(euler, 0.2f);
-                this.StartChain().Wait(0.5f).Call(() => isRotate = false);
+                this.StartChain().Wait(0.2f).Call(() => isRotate = false);
 
             }
             return;
