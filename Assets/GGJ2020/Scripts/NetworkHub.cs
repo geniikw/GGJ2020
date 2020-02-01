@@ -56,8 +56,9 @@ public class NetworkHub : MonoBehaviourPunCallbacks
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        status.text = "방이 없거나 찼거나 암튼 못들어감.";
+        status.text = "방이 없거나 찼거나 암튼 못들어감. 아무데나 들어감";
         status.color = Color.red;
+        PhotonNetwork.JoinRandomRoom();
     }
 
 

@@ -22,8 +22,11 @@ public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public Text userCount;
     public Text roomNumber;
+    public Text guide;
 
     public Button playButton;
+
+    public Button gameStartButton;
 
     public Cell[][] grid;
 
@@ -33,7 +36,7 @@ public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public int currentSelectActor = -1;
 
-    
+
 
     public override void OnEnable()
     {
@@ -76,9 +79,18 @@ public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void SetXY(int x, int y)
     {
+        if (MonoPlayer.i.actorNumber != currentSelectActor)
+            return;
+
         if (current.x == x && current.y == y)
             return;
-        
+
+        GameManager.SendEvent(PK.MoveSelecter, new object[] { x, y });
+        MovePoint(x, y);
+    }
+
+    public void MovePoint(int x, int y)
+    {
         current = new Vector2Int(x, y);
 
         var phoneSize = GameData.ins.phoneSize;
@@ -184,8 +196,57 @@ public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    void ConfirmPosition()
+    {
+        var point = current;
+        var size = GameData.ins.phoneSize;
+
+        if (isVertical)
+        {
+            for (int y = 0; y < grid.Length; y++)
+            {
+                for (int x = 0; x < grid[0].Length; x++)
+                {
+                    if (grid[y][x].state == 1 || grid[y][x].isConfirm)
+                        continue;
+
+                    if (point.y <= y && y < point.y + size.y && point.x <= x && x < point.x + size.x)
+                    {
+                        grid[y][x].isConfirm = true;
+                    }
+                }
+            }
+
+        }
+        else
+        {
+            for (int y = 0; y < grid.Length; y++)
+            {
+                for (int x = 0; x < grid[0].Length; x++)
+                {
+                    if (grid[y][x].state == 1 || grid[y][x].isConfirm)
+                        continue;
+
+                    if (point.y >= y && y > point.y - size.x && point.x <= x && x < point.x + size.y)
+                    {
+                        grid[y][x].isConfirm = true;
+                    }
+
+                }
+            }
+        }
+    }
+
+    public void OnConfirm()
+    {
+        GameManager.SendEvent(PK.ConfirmPosition);
+    }
+
+
     public void Rotate()
     {
+        if (MonoPlayer.i.actorNumber == currentSelectActor)
+            GameManager.SendEvent(PK.RotateSelecter, null);
         isVertical = !isVertical;
         if (!isVertical)
             current = new Vector2Int(0, 2);
@@ -194,27 +255,90 @@ public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
 
         var phoneSize = GameData.ins.phoneSize;
 
-
-
         if (isVertical)
             ColoringVertical(current, phoneSize);
         else
             ColoringHorizontal(current, phoneSize);
     }
 
-    public void OnGameStartClick(){
+    public void OnGameStartClick()
+    {
         GameManager.StartSetPhoneStep(m_playerList);
     }
 
+    public void OnStartSetItem(){
+        GameManager.SendEvent(PK.StartSetItem);
+    }
 
-    public  void OnEvent(EventData photonEvent){
-        if(photonEvent.Code == 1){
+
+    public void OnEvent(EventData photonEvent)
+    {
+        if (photonEvent.Code == 1)
+        {
             //game start
-            Debug.Log("game start");
-
-            waitMenu.SetActive(false);
-            selectMenu.SetActive(true);
-            currentSelectActor = m_playerList[0].ActorNumber;
+            StartUserPosition();
         }
+        else if (photonEvent.Code == 2)
+        {
+            var xy = (object[])photonEvent.CustomData;
+            var x = (int)xy[0];
+            var y = (int)xy[1];
+            Debug.Log("Receive MoveEvent " + x + " " + y);
+            if (MonoPlayer.i.actorNumber != currentSelectActor)
+            {
+                MovePoint(x, y);
+            }
+        }
+        else if (photonEvent.Code == 3)
+        {
+            if (MonoPlayer.i.actorNumber != currentSelectActor)
+            {
+                Rotate();
+            }
+        }
+
+        else if (photonEvent.Code == 4)
+        {
+            ConfirmPosition();
+
+            var selector = m_playerList.First(p => p.ActorNumber == currentSelectActor);
+            var idx = m_playerList.IndexOf(selector);
+            var me = m_playerList.First(p => p.NickName == PhotonNetwork.NickName);
+            var myIdx = m_playerList.IndexOf(me);
+
+
+            if (idx == m_playerList.Count - 1)
+            {
+                if (myIdx == 0)
+                    gameStartButton.gameObject.SetActive(true);
+                selectMenu.SetActive(false);
+                waitMenu.SetActive(false);
+            }
+            else
+            {
+                idx++;
+                selectMenu.SetActive(myIdx == idx);
+                guide.text = (idx + 1) + "번 유저가 선택중입니다.";
+                currentSelectActor = m_playerList[idx].ActorNumber;
+            }
+        }
+        else if(photonEvent.Code == 5){
+            GameManager.StartItemSetStep();
+        }
+    }
+
+
+    public void StartUserPosition()
+    {
+        var me = m_playerList.First(p => p.NickName == PhotonNetwork.NickName);
+        var myIdx = m_playerList.IndexOf(me);
+
+        waitMenu.SetActive(false);
+        selectMenu.SetActive(myIdx == 1);
+        gameStartButton.gameObject.SetActive(false);
+        currentSelectActor = m_playerList[1].ActorNumber;
+        guide.text = "2번 유저가 선택중입니다.";
+
+        FindObjectOfType<MonoPlayer>().Setup(myIdx == 0, me.ActorNumber, myIdx);
     }
 }
