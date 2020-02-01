@@ -8,9 +8,10 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
     public GameObject menuSet;
 
     public GameObject BulletPrefab;
-
     public Transform firePosition;
     public Transform bulletEnd;
+
+    public GameObject explosionPrefab;
 
 
     private void Start()
@@ -25,7 +26,13 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
 
     public void OnDestroy()
     {
-        Destroy(gameObject);
+        enabled = false;
+        var go = Instantiate(explosionPrefab);
+        go.transform.SetParent(transform);
+        go.transform.localPosition = Vector3.zero;
+        go.transform.localScale = Vector3.one;
+        Destroy(go, 1f);
+        Destroy(gameObject, 1f);
     }
 
     public void OnCoreDestroy()
@@ -35,6 +42,15 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
 
         Destroy(gameObject); //파괴 이팩트?
     }
+
+    public void OnWin()
+    {
+        Debug.Log("dd");
+        BGManager.i.GameEnd(false);
+
+        Destroy(gameObject); //파괴 이팩트?
+    }
+
 
     public void OnRotate()
     {

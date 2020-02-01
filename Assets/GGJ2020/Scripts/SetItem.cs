@@ -32,34 +32,47 @@ public class SetItem : MonoBehaviour
 
     public void Initalize()
     {
+        tempList = FindObjectsOfType<ItemObject>().Where(i => !i.isClonable).ToList();
+        foreach (var item in FindObjectsOfType<ItemObject>())
+        {
+            Destroy(item.gameObject);
+        }
+
         complete.gameObject.SetActive(true);
         inven.position = setupPosition.position;
-        transform.localScale= Vector3.one;
-        foreach(var s in shopList)
+        transform.localScale = Vector3.one;
+        foreach (var s in shopList)
             s.gameObject.SetActive(true);
+
+
+
+
 
         var go = Instantiate(corePrefab);
         go.transform.SetParent(coreSlot.transform.parent);
-        go.transform.position= coreSlot.transform.position;
+        go.transform.position = coreSlot.transform.position;
         go.transform.localScale = Vector3.one;
         coreSlot.item = go.GetComponent<ItemObject>();
+
     }
 
     public void OnComplete()
     {
         foreach (var s in FindObjectsOfType<Slot>())
         {
-            if(s.item != null)
+            if (s.item != null)
                 s.item.transform.SetParent(s.transform);
         }
-        shopList = FindObjectsOfType<ItemObject>().Where(i=>i.isClonable).ToList();
-        foreach(var item in shopList){
+        shopList = FindObjectsOfType<ItemObject>().Where(i => i.isClonable).ToList();
+        foreach (var item in shopList)
+        {
             item.gameObject.SetActive(false);
         }
-         
 
-        tempList =  FindObjectsOfType<ItemObject>().Where(i=>!i.isClonable).ToList();
-        foreach(var item in FindObjectsOfType<ItemObject>()){
+
+        tempList = FindObjectsOfType<ItemObject>().Where(i => !i.isClonable).ToList();
+        foreach (var item in FindObjectsOfType<ItemObject>())
+        {
             item.gameObject.SetActive(false);
             item.enabled = false;
         }
@@ -67,7 +80,7 @@ public class SetItem : MonoBehaviour
         guide.SetActive(true);
 
 
-        
+
         inven.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
 
         this.Scale(Vector3.one * 1.4f, 0.2f);

@@ -10,6 +10,10 @@ public class Guide : MonoBehaviour, IPointerClickHandler
 
     public GameObject score;
 
+    public void OnEnable(){
+        count = 3;
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         count--;
@@ -31,17 +35,5 @@ public class Guide : MonoBehaviour, IPointerClickHandler
             gameObject.SetActive(false);
             score.SetActive(true);
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

@@ -24,11 +24,11 @@ public class BGManager : MonoBehaviour
         scoreText.NumberTween(_score, 0.2f);
     }
 
-    public void GameEnd()
+    public void GameEnd(bool isFail = true)
     {
-        _score += DB.i.destroyCoreScore;
+        _score += isFail?DB.i.destroyCoreScore:-DB.i.destroyCoreScore;
         gameOver.gameObject.SetActive(true);
-        gameOver.score.NumberTween(_score, 1f);
+        gameOver.score.NumberTween(0,_score, 1f);
         score.SetActive(false);
 
     }
