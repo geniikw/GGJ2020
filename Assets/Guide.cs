@@ -8,6 +8,8 @@ public class Guide : MonoBehaviour, IPointerClickHandler
     public Text text;
     public int count = 3;
 
+    public GameObject score;
+
     public void OnPointerClick(PointerEventData eventData)
     {
         count--;
@@ -20,10 +22,14 @@ public class Guide : MonoBehaviour, IPointerClickHandler
             {
                 item.gameObject.SetActive(true);
                 item.enabled = false;
-              
+            }
+
+            foreach(var t in SetItem.tempList){
+                t.menu.enabled = true;
             }
 
             gameObject.SetActive(false);
+            score.SetActive(true);
         }
     }
 

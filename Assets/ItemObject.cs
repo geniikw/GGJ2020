@@ -18,6 +18,12 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
     public bool isDrag = false;
     public bool isRotate = false;
 
+    public MenuSelector menu;
+
+    private void Start()
+    {
+
+    }
     public void OnPointerDown(PointerEventData eventData)
     {
         if (isRotate)

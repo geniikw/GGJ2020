@@ -15,11 +15,15 @@ public class SetItem : MonoBehaviour
 
     public GameObject itemPrefab;
 
+    public ItemObject corePrefab;
+    public Slot coreSlot;
+
     public List<int> _itemList;
 
     public Button complete;
 
     public static List<ItemObject> tempList;
+    public static List<ItemObject> shopList;
 
     private void Awake()
     {
@@ -30,6 +34,14 @@ public class SetItem : MonoBehaviour
     {
         complete.gameObject.SetActive(true);
         inven.position = setupPosition.position;
+        transform.localScale= Vector3.one;
+        foreach(var s in shopList)
+            s.gameObject.SetActive(true);
+
+        var go = Instantiate(corePrefab);
+        go.transform.SetParent(coreSlot.transform.parent);
+        go.transform.position= coreSlot.transform.position;
+        coreSlot.item = go.GetComponent<ItemObject>();
     }
 
     public void OnComplete()
@@ -39,9 +51,11 @@ public class SetItem : MonoBehaviour
             if(s.item != null)
                 s.item.transform.SetParent(s.transform);
         }
-
-        foreach(var item in FindObjectsOfType<ItemObject>().Where(i=>i.isClonable))
-            Destroy(item.gameObject);
+        shopList = FindObjectsOfType<ItemObject>().Where(i=>i.isClonable).ToList();
+        foreach(var item in shopList){
+            item.gameObject.SetActive(false);
+        }
+         
 
         tempList =  FindObjectsOfType<ItemObject>().Where(i=>!i.isClonable).ToList();
         foreach(var item in FindObjectsOfType<ItemObject>()){
@@ -63,14 +77,6 @@ public class SetItem : MonoBehaviour
     public void ValidateButton()
     {
         var isView = true;
-        // foreach (var s in FindObjectsOfType<Slot>())
-        // {
-        //     if (s.item == null)
-        //     {
-        //         isView = false;
-        //         break;
-        //     }
-        // }
         complete.interactable = isView;
     }
 

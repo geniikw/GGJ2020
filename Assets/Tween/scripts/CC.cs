@@ -183,10 +183,21 @@ public static class CC
         return runner.StartCoroutine(TweenRoutine(runner, () => end, LongParse, (p, i) => p.text = i.ToString("N0"), LerpUtil.LongLerp, time, curve));
     }
 
+    public static Coroutine NumberTween(this Text runner, float end, TimeContainer time, AnimationCurve curve = null)
+    {
+        return runner.StartCoroutine(TweenRoutine(runner, () => end, FloatPare, (p, i) => p.text = i.ToString("N0"), Mathf.Lerp, time, curve));
+    }
+
     private static long LongParse(TextMeshProUGUI text)
     {
         var str = text.text;
         return long.Parse(str.Replace(",", ""));
+    }
+
+    private static float FloatPare(Text text)
+    {
+        var str = text.text;
+        return float.Parse(str.Replace(",", ""));
     }
 
 
