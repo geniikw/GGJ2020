@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Slot : MonoBehaviour
+public class MainWorld : MonoBehaviour
 {
-    public int slotIdx;
+    
 
-    public ItemObject item;
+
 }

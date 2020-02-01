@@ -36,36 +36,39 @@ public class GameManager : MonoBehaviour
         return itemList[MonoPlayer.i._myIdx];
     }
 
+    public void SetInven(List<int> inven, int idx)
+    {
+        itemList[idx] = inven;
+    }
+
     void Start()
     {
         i = this;
-        ClearInfo();
+        
     }
 
-    public void ClearInfo()
-    {
-        for (int n = 0; n < itemList.Count; n++){
-            itemList.Add(new List<int>(15));
-            itemList[n].AddRange(Enumerable.Repeat<int>(0,15));
-        }
-        for (int n = 0; n < playerCost.Count; n++)
-        {
-            playerCost.Add(GameData.ins.initialCost);
-        }
-    }
-
-    public static void StartSetPhoneStep(List<Player> players)
+    public static void InitPlayerData(List<Player> players)
     {
         i.playerList = players;
-        SendEvent(PK.SelectStart, null);
+        for (int n = 0; n < players.Count; n++)
+        {
+            var list = new List<int>(15);
+            list.AddRange(Enumerable.Repeat<int>(0, 15));
+            i.itemList.Add(list);
+        }
+        for (int n = 0; n < players.Count; n++)
+        {
+            i.playerCost.Add(GameData.ins.initialCost);
+        }
+        
+        
     }
 
     public static void StartItemSetStep()
     {
         Clear();
-        if (MonoPlayer.i._isMotherShip)
-            i.waitOther.SetActive(true);
-        else
+        i.waitOther.SetActive(true);
+        if (!MonoPlayer.i._isMotherShip)
             i.setItem.SetActive(true);
     }
 

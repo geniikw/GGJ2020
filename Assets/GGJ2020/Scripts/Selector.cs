@@ -263,10 +263,12 @@ public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void OnGameStartClick()
     {
-        GameManager.StartSetPhoneStep(m_playerList);
+        GameManager.SendEvent(PK.SelectStart, null);
+
     }
 
-    public void OnStartSetItem(){
+    public void OnStartSetItem()
+    {
         GameManager.SendEvent(PK.StartSetItem);
     }
 
@@ -276,6 +278,7 @@ public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
         if (photonEvent.Code == 1)
         {
             //game start
+            GameManager.InitPlayerData(m_playerList);
             StartUserPosition();
         }
         else if (photonEvent.Code == 2)
@@ -322,7 +325,8 @@ public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
                 currentSelectActor = m_playerList[idx].ActorNumber;
             }
         }
-        else if(photonEvent.Code == 5){
+        else if (photonEvent.Code == 5)
+        {
             GameManager.StartItemSetStep();
         }
     }
