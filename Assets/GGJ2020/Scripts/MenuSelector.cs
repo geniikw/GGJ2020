@@ -41,7 +41,7 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
         var euler = transform.eulerAngles;
         euler.z += 90f;
         this.Rotation(euler, 0.2f);
-
+        menuSet.SetActive(false);
 
     }
 
@@ -53,11 +53,11 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
         go.transform.localPosition = Vector3.zero;
         go.transform.localScale = Vector3.one;
 
-        
-        
+
+
         go.transform.SetParent(FindObjectOfType<BulletTransform>().transform);
         go.GetComponent<MonoBehaviour>().Move(bulletEnd, 1f);
-        Destroy(go,2f);
+        Destroy(go, 2f);
         menuSet.SetActive(false);
     }
 
