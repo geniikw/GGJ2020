@@ -81,9 +81,9 @@ public class SetItem : MonoBehaviour
 
 
 
-        inven.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+        inven.GetComponent<Graphic>().MoveUI(Vector2.zero, 0.2f, AnimationCurve.EaseInOut(0,0,1,1));
 
-        this.Scale(Vector3.one * 1.4f, 0.2f);
+        this.Scale(Vector3.one * 1.4f, 0.2f, AnimationCurve.EaseInOut(0,0,1,1));
 
         complete.gameObject.SetActive(false);
     }
