@@ -96,7 +96,7 @@ public class NetworkHub : MonoBehaviourPunCallbacks
         isJoin = true;
         if (PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.JoinRoom(roomNumber.text);
+            PhotonNetwork.JoinRandomRoom();
         }
         else
         {
