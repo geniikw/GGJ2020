@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,6 +10,8 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     public int y;
 
     public bool isConfirm = false;
+
+    public bool isVertical = true;
     /// <summary>
     /// 0은 빈공간
     /// 1은 마더쉽
@@ -51,8 +54,12 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        
-        _selector.SetXY(new Vector2Int(x,y));
+        _selector.SetXY(x,y);
+    }
+
+    public void Confirm(bool isVertical)
+    {
+        this.isVertical = isVertical;
     }
 
     public Color color

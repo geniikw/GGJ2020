@@ -3,10 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using System.Linq;
+using Photon.Realtime;
+using UnityEngine.UI;
+using ExitGames.Client.Photon;
 
-public class Selector : MonoBehaviour
+public class Selector : MonoBehaviourPunCallbacks, IOnEventCallback
 {
+    public static Selector i;
+
+    public List<Player> m_playerList = new List<Player>();
+
+    public GameObject selectMenu;
+    public GameObject waitMenu;
+
+
+
     public Vector2Int current;
+
+    public Text userCount;
+    public Text roomNumber;
+
+    public Button playButton;
 
     public Cell[][] grid;
 
@@ -16,22 +33,62 @@ public class Selector : MonoBehaviour
 
     public int currentSelectActor = -1;
 
-    [PunRPC]
-    public void SetXY(Vector2Int position)
-    {
+    
 
-        if (current.x == position.x && current.y == position.y)
+    public override void OnEnable()
+    {
+        base.OnEnable();
+        i = this;
+        PhotonNetwork.AddCallbackTarget(this);
+
+    }
+
+    public override void OnDisable()
+    {
+        base.OnEnable();
+        PhotonNetwork.RemoveCallbackTarget(this);
+
+    }
+
+    public void Start()
+    {
+        roomNumber.text = PhotonNetwork.CurrentRoom.Name;
+        UpdateUser();
+        playButton.gameObject.SetActive(m_playerList[0].NickName.Equals(PhotonNetwork.NickName));
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        UpdateUser();
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer) => UpdateUser();
+
+    public void UpdateUser()
+    {
+        m_playerList.Clear();
+        m_playerList.AddRange(PhotonNetwork.CurrentRoom.Players.Values);
+        m_playerList = m_playerList.OrderBy(user => user.ActorNumber).ToList();
+
+        userCount.text = PhotonNetwork.CurrentRoom.PlayerCount.ToString();
+        playButton.interactable = PhotonNetwork.CurrentRoom.PlayerCount > 1;
+    }
+
+    public void SetXY(int x, int y)
+    {
+        if (current.x == x && current.y == y)
             return;
-        current = position;
+        
+        current = new Vector2Int(x, y);
 
         var phoneSize = GameData.ins.phoneSize;
 
-        if (isVertical ? ValidationVertical(position, phoneSize) : ValidationHorizontal(position, phoneSize))
+        if (isVertical ? ValidationVertical(current, phoneSize) : ValidationHorizontal(current, phoneSize))
         {
             if (isVertical)
-                ColoringVertical(position, phoneSize);
+                ColoringVertical(current, phoneSize);
             else
-                ColoringHorizontal(position, phoneSize);
+                ColoringHorizontal(current, phoneSize);
         }
     }
 
@@ -118,8 +175,8 @@ public class Selector : MonoBehaviour
                 if (point.y >= y && y > point.y - size.x && point.x <= x && x < point.x + size.y)
                 {
                     grid[y][x].SetState(2);
-                    if(y==point.y && x == point.x)
-                         grid[y][x].SetState(3);
+                    if (y == point.y && x == point.x)
+                        grid[y][x].SetState(3);
                 }
                 else
                     grid[y][x].SetState(0);
@@ -143,10 +200,21 @@ public class Selector : MonoBehaviour
             ColoringVertical(current, phoneSize);
         else
             ColoringHorizontal(current, phoneSize);
-        Debug.Log("rotate");
+    }
 
-
+    public void OnGameStartClick(){
+        GameManager.StartSetPhoneStep(m_playerList);
     }
 
 
+    public  void OnEvent(EventData photonEvent){
+        if(photonEvent.Code == 1){
+            //game start
+            Debug.Log("game start");
+
+            waitMenu.SetActive(false);
+            selectMenu.SetActive(true);
+            currentSelectActor = m_playerList[0].ActorNumber;
+        }
+    }
 }
