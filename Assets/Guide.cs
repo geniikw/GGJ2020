@@ -12,6 +12,7 @@ public class Guide : MonoBehaviour, IPointerClickHandler
 
     public void OnEnable(){
         count = 3;
+        text.text = "3";
     }
 
     public void OnPointerClick(PointerEventData eventData)
