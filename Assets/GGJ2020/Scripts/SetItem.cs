@@ -13,6 +13,8 @@ public class SetItem : MonoBehaviour
     public Transform inven;
     public Transform setupPosition;
 
+    public GameObject score;
+
     public GameObject itemPrefab;
 
     public ItemObject corePrefab;
@@ -106,6 +108,30 @@ public class SetItem : MonoBehaviour
     {
         var isView = true;
         complete.interactable = isView;
+    }
+
+    public void Resetup()
+    {
+        inven.GetComponent<Graphic>().Move(setupPosition, 0.2f, AnimationCurve.EaseInOut(0, 0, 1, 1));
+
+        this.Scale(Vector3.one, 0.2f, AnimationCurve.EaseInOut(0, 0, 1, 1));
+
+        score.SetActive(false);
+        complete.gameObject.SetActive(true);
+        goldText.gameObject.SetActive(true);
+        SetGold(_gold+DB.i.addGold);
+
+        foreach (var s in shopList)
+            s.gameObject.SetActive(true);
+
+        foreach (var i in tempList)
+        {
+            {
+                i.menu.enabled = false;
+                i.enabled = true;
+            }
+        }
+
     }
 
 

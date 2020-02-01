@@ -10,6 +10,7 @@ public class DB : MonoBehaviour
     public int destroyCoreScore = -100;
 
     public int initGold = 7;
+    public int addGold = 1;
     // Start is called before the first frame update
     void Awake()
     {
