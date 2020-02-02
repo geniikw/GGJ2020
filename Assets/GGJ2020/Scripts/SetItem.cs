@@ -23,9 +23,10 @@ public class SetItem : MonoBehaviour
     public List<int> _itemList;
 
     public Button complete;
+    public List<GameObject> shopPad;
 
     public static List<ItemObject> tempList = new List<ItemObject>();
-    public static List<ItemObject> shopList= new List<ItemObject>();
+    public static List<ItemObject> shopList = new List<ItemObject>();
 
     public Text goldText;
 
@@ -114,6 +115,12 @@ public class SetItem : MonoBehaviour
 
     public void Resetup()
     {
+        SetGold(_gold + DB.i.addGold);
+        Reposition();
+    }
+
+    public void Reposition()
+    {
         inven.GetComponent<Graphic>().Move(setupPosition, 0.2f, AnimationCurve.EaseInOut(0, 0, 1, 1));
 
         this.Scale(Vector3.one, 0.2f, AnimationCurve.EaseInOut(0, 0, 1, 1));
@@ -121,8 +128,9 @@ public class SetItem : MonoBehaviour
         score.SetActive(false);
         complete.gameObject.SetActive(true);
         goldText.gameObject.SetActive(true);
-        SetGold(_gold + DB.i.addGold);
-        foreach(var i in  FindObjectsOfType<ButtonAnimation>()){
+
+        foreach (var i in FindObjectsOfType<ButtonAnimation>())
+        {
             i.gameObject.SetActive(false);
         }
 
@@ -140,7 +148,6 @@ public class SetItem : MonoBehaviour
             });
 
         }
-
     }
 
 

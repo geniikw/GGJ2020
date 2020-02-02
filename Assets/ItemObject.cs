@@ -100,6 +100,7 @@ public class ItemObject : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
 
         if (fslot != null && fslot.item == null)
         {
+            AudioManager.i.PlaySound(5);
             var slot = FindObjectsOfType<Slot>().FirstOrDefault(s => s.item == this);
             if (slot != null)
                 slot.item = null;

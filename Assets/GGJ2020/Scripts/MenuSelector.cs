@@ -26,6 +26,7 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
 
     public void OnDestroyClick()
     {
+        AudioManager.i.PlaySound(4);
         enabled = false;
         var go = Instantiate(explosionPrefab);
         go.transform.SetParent(transform);
@@ -37,6 +38,7 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
 
     public void OnCoreDestroy()
     {
+        AudioManager.i.PlaySound(2);
         Debug.Log("dd");
         BGManager.i.GameEnd();
 
@@ -45,6 +47,7 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
 
     public void OnWin()
     {
+        AudioManager.i.PlaySound(3);
         Debug.Log("dd");
         BGManager.i.GameEnd(false);
 
@@ -67,6 +70,8 @@ public class MenuSelector : MonoBehaviour, IPointerClickHandler
 
     public void Fire()
     {
+        AudioManager.i.PlaySound(1);
+
         BGManager.i.FireScore();
         var go = Instantiate(BulletPrefab);
         go.transform.SetParent(firePosition);
