@@ -10,7 +10,39 @@ public class Guide : MonoBehaviour, IPointerClickHandler
 
     public GameObject score;
 
-    public void OnEnable(){
+    public Transform inventory;
+
+    public Transform rightPosition;
+    public Transform leftPosition;
+
+    public int _currentPosition = 0;
+
+
+    public void MoveRight()
+    {
+        _currentPosition = Mathf.Min(1, _currentPosition + 1);
+        UpdatePosition();
+    }
+
+    public void MoveLeft()
+    {
+        _currentPosition = Mathf.Max(-1, _currentPosition - 1);
+        UpdatePosition();
+    }
+
+    public void UpdatePosition()
+    {
+        if (_currentPosition == -1)
+            inventory.position = rightPosition.position;
+        else if (_currentPosition == 0)
+            inventory.localPosition = Vector3.zero;
+        else if (_currentPosition == 1)
+            inventory.position = leftPosition.position;
+
+    }
+
+    public void OnEnable()
+    {
         count = 3;
         text.text = "3";
     }
@@ -29,7 +61,8 @@ public class Guide : MonoBehaviour, IPointerClickHandler
                 item.enabled = false;
             }
 
-            foreach(var t in SetItem.tempList){
+            foreach (var t in SetItem.tempList)
+            {
                 t.menu.enabled = true;
             }
 

@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Title.unity
+    guid: 18a2a50e651eef54c90abdd2ad85b89d
+  - enabled: 1
     path: Assets/LightWeight/Simple.unity
     guid: f5efacd4de134074ebd5bd3372a6b036
+  - enabled: 1
+    path: Assets/LightWeight/Simple3x3.unity
+    guid: 6461f64efce26614a81fca243ebb94c9
   m_configObjects: {}

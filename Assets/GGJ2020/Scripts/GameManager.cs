@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         i = this;
-        
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     public static void InitPlayerData(List<Player> players)

@@ -78,6 +78,11 @@ public class SetItem : MonoBehaviour
     {
         goldText.gameObject.SetActive(false);
 
+        foreach (var i in shopPad)
+        {
+            i.SetActive(false);
+        }
+
         foreach (var s in FindObjectsOfType<Slot>())
         {
             if (s.item != null)
@@ -121,6 +126,11 @@ public class SetItem : MonoBehaviour
 
     public void Reposition()
     {
+        foreach (var i in shopPad)
+        {
+            i.SetActive(true);
+        }
+
         inven.GetComponent<Graphic>().Move(setupPosition, 0.2f, AnimationCurve.EaseInOut(0, 0, 1, 1));
 
         this.Scale(Vector3.one, 0.2f, AnimationCurve.EaseInOut(0, 0, 1, 1));
